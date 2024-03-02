@@ -131,9 +131,9 @@ const createRow = (obj) => {
   return trEl;
 };
 
-const renderGoods = (data) => {
-  data.forEach(obj => {
-    return tableBody.append(createRow(obj));
+const renderGoods = (arr) => {
+  arr.forEach(obj => {
+    tableBody.append(createRow(obj));
 })
 };
 
