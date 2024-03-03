@@ -60,12 +60,15 @@ const goods = `
   }
 ]`;
 
+const overlayModal = document.querySelector('.overlay__modal');
 const tableBody = document.querySelector('.table__body');
 const modalTitle = document.querySelector('.modal__title');
 const modalForm = document.querySelector('.modal__form');
 const modalCheckbox = document.querySelector('.modal__checkbox');
 const modalInputDiscount = document.querySelector('.modal__input_discount');
 const overlay = document.querySelector('.overlay');
+const btnPanelAddGoods = document.querySelector('.panel__add-goods');
+const btnModalClose = document.querySelector('.modal__close');
 
 overlay.classList.toggle('active');
 console.log(overlay);
@@ -139,3 +142,18 @@ const renderGoods = (arr) => {
 
 renderGoods(data);
 
+btnPanelAddGoods.addEventListener('click', () => {
+  overlay.classList.add('active');
+});
+
+btnModalClose.addEventListener('click', () => {
+  overlay.classList.remove('active');
+});
+
+overlay.addEventListener('click', event => {
+  overlay.classList.remove('active');
+});
+
+overlayModal.addEventListener('click', event => {
+  event.stopPropagation();
+});
