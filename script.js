@@ -145,15 +145,40 @@ renderGoods(data);
 btnPanelAddGoods.addEventListener('click', () => {
   overlay.classList.add('active');
 });
-
+/*
 btnModalClose.addEventListener('click', () => {
   overlay.classList.remove('active');
 });
-
-overlay.addEventListener('click', event => {
-  overlay.classList.remove('active');
+*/
+overlay.addEventListener('click', e => {
+  const target = e.target;
+  if (target.closest('.modal__close') ||
+    target === overlay) {
+    overlay.classList.remove('active');
+  }
 });
 
+/*
 overlayModal.addEventListener('click', event => {
   event.stopPropagation();
 });
+*/
+
+tableBody.addEventListener('click', e => {
+  const target = e.target;
+  console.log(target.parentElement.parentElement.childNodes[1]);
+  const id = target.parentElement.parentElement.childNodes[1].dataset.id;
+
+  if (target.classList.contains('table__btn_del')) {
+    //console.log(target.closest('tr'));
+    target.closest('tr').remove();
+
+    console.log(id);
+    delete data[id-1];
+    console.log('data', data);
+  }
+});
+
+
+
+
