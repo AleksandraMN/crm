@@ -60,36 +60,47 @@ const goods = `
   }
 ]`;
 
+const overlay = document.querySelector('.overlay');
 const overlayModal = document.querySelector('.overlay__modal');
 const tableBody = document.querySelector('.table__body');
 const modalTitle = document.querySelector('.modal__title');
+
 const modalForm = document.querySelector('.modal__form');
 const modalCheckbox = document.querySelector('.modal__checkbox');
 const modalInputDiscount = document.querySelector('.modal__input_discount');
-const overlay = document.querySelector('.overlay');
 const btnPanelAddGoods = document.querySelector('.panel__add-goods');
 const btnModalClose = document.querySelector('.modal__close');
+const modalInputs = document.querySelectorAll('.modal__input');
+const price = document.querySelector('#price');
+const countInput = document.querySelector('#count');
+const vendorCodeId = document.querySelector('.vendor-code__id');
+const modalTotalPrice = document.querySelector('.modal__total-price');
+const cmsTotalPrice = document.querySelector('.cms__total-price');
 
-overlay.classList.toggle('active');
+let count = 1; // счетчик порядкового номера товаров
+
+
+overlay.classList.toggle('active'); // скрыть модальное окно
 console.log(overlay);
 
-const data = JSON.parse(goods);
+const data = JSON.parse(goods); // преобразование JSON формата в массив объектов
 console.log(data);
 
+// создание строки в таблице
 const createRow = (obj) => {
   const trEl = document.createElement('tr');
   const td1 = document.createElement('td');
   td1.className = 'table__cell';
-  td1.textContent = obj.id;
+  td1.textContent = count;
   trEl.appendChild(td1);
 
   const td2 = document.createElement('td');
   td2.classList.add('table__cell', 'table__cell_left', 'table__cell_name');
   td2.setAttribute('data-id', obj.id);
-  td2.textContent = obj.title;
+  td2.textContent = obj.title || obj.name;
   const span = document.createElement('span');
   span.classList.add('table__cell-id');
-  span.textContent = 'id: ' + obj.id;
+  span.textContent = 'id: ' + obj.id || vendorCodeId.textContent;
   td2.prepend(span);
   trEl.appendChild(td2);
 
@@ -110,12 +121,12 @@ const createRow = (obj) => {
 
   const td6 = document.createElement('td');
   td6.classList.add('table__cell');
-  td6.textContent = '$' + (obj.price - (obj.price / 100 * obj.discont));
+  td6.textContent = '$' + (obj.price - (obj.price / 100 * obj.discount_count || obj.discont || 0));
   trEl.appendChild(td6);
 
   const td7 = document.createElement('td');
   td7.classList.add('table__cell');
-  td7.textContent = '$' + ((obj.price - (obj.price / 100 * obj.discont)) * obj.count);
+  td7.textContent = '$' + ((obj.price - (obj.price / 100 * obj.discount_count || obj.discont || 0)) * obj.count);
   trEl.appendChild(td7);
 
   const td8 = document.createElement('td');
@@ -131,25 +142,44 @@ const createRow = (obj) => {
   td8.append(btn3);
   trEl.appendChild(td8);
 
+  count++;
+
   return trEl;
 };
 
+// создание таблицы
 const renderGoods = (arr) => {
   arr.forEach(obj => {
     tableBody.append(createRow(obj));
-})
+  })
 };
-
 renderGoods(data);
 
+// функция подсчета итоговой суммы вверху таблицы
+const getTotalSum = (data) => {
+const totalSum = data.reduce((acc, item, arr) => {
+  return acc + ((item.price - (item.price / 100 * item.discount_count || item.discont || 0)) * item.count);
+}, 0);
+
+return cmsTotalPrice.textContent = '$' + totalSum;
+};
+getTotalSum(data);
+
+// функция генерации случайного числа
+const getRandom = (min, max) => {
+  const number = Math.floor(Math.random() * (max - min + 1) + min);
+  return number;
+};
+
+// Открытие модального окна
 btnPanelAddGoods.addEventListener('click', () => {
   overlay.classList.add('active');
+  const id = getRandom(1, 10000000); // получение случайного id
+  vendorCodeId.textContent = id; // присвоение id в модальном окне
+  modalTotalPrice.textContent = '$' + 0; // обнуление итоговой суммы модальном окне
 });
-/*
-btnModalClose.addEventListener('click', () => {
-  overlay.classList.remove('active');
-});
-*/
+
+// закрытие модального окна
 overlay.addEventListener('click', e => {
   const target = e.target;
   if (target.closest('.modal__close') ||
@@ -158,27 +188,81 @@ overlay.addEventListener('click', e => {
   }
 });
 
-/*
-overlayModal.addEventListener('click', event => {
-  event.stopPropagation();
-});
-*/
-
+// удаление товара из таблицы и массива товаров
 tableBody.addEventListener('click', e => {
   const target = e.target;
-  console.log(target.parentElement.parentElement.childNodes[1]);
-  const id = target.parentElement.parentElement.childNodes[1].dataset.id;
+  console.log(target.parentElement.parentElement.childNodes[1].dataset.id); // id товара
+  const id = target.parentElement.parentElement.childNodes[0].textContent;
 
   if (target.classList.contains('table__btn_del')) {
-    //console.log(target.closest('tr'));
     target.closest('tr').remove();
 
     console.log(id);
-    delete data[id-1];
+    //data.splice(id - 1, 1);
+    delete data[id - 1]; // удаление товара привязано к порядковому номеру и индексу в массиве товаров
+    //data.splice([...document.querySelectorAll('.button-delete')]
+    //  .indexOf(target.parentElement.parentElement.childNodes[1].dataset.id), 1);
     console.log('data', data);
+    getTotalSum(data); // расчет итоговой суммы
   }
 });
 
+
+// валидация формы
+// Все поля обязательны к заполнению (исключение изображение), с помощью атрибутов в html
+// правильный тип полей в html, для текста - text, для чисел - number
+const validateForm = () => {
+  Array.from(modalInputs).map((element) => {
+  element.setAttribute('required', 'true');
+});
+price.setAttribute('type', 'number');
+countInput.setAttribute('type', 'number');
+modalInputDiscount.setAttribute('type', 'number');
+};
+validateForm();
+
+
+// отправка формы
+modalForm.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+
+  console.log(e.target);
+  const newGood = Object.fromEntries(formData);
+  console.log('newGood', newGood);
+  newGood.id = vendorCodeId.textContent; // id присваивается новому товару
+
+  data.push(newGood);
+  console.log(data);
+
+  tableBody.append(createRow(newGood)); // заполнение таблицы
+
+  modalForm.reset(); // очистка полей модального окна при нажатии клавиши отправить
+  overlay.classList.remove('active'); // закрытие модального окна
+  getTotalSum(data);  // пересчет итоговой суммы вверху таблицы при закрытии модального окна
+});
+
+// Итоговая стоимость в модальном окне должна правильно высчитываться при смене фокуса
+modalForm.addEventListener('change', () => {
+  modalTotalPrice.textContent = '$' +
+    ((price.value - (price.value / 100 * modalInputDiscount.value)) * countInput.value);
+});
+
+
+//  В форме если поставить чекбокс должен быть разблокирован input с name discount_count
+// если чекбокс убрать поле discount_count очищается и блокируется
+modalForm.addEventListener('click', e => {
+  const target = e.target;
+
+  if (target.type === 'checkbox') {
+    if (target.checked === true) {
+      modalInputDiscount.disabled = false;
+    } else {
+      modalInputDiscount.disabled = true;
+    }
+  }
+});
 
 
 
