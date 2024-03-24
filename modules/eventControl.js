@@ -116,8 +116,8 @@ const openImageModal = (tableBody) => {
       console.log(screen);
       const height = Math.min(h, screen.availHeight);
       const width = Math.min(w, screen.availWidth);
-      const left = (screen.width - w) / 2;
-      const top = (screen.height - h) / 2;
+      const left = (screen.width - width) / 2;
+      const top = (screen.height - height) / 2;
       return window.open(url, '', `height=${height},` +
       `width=${width},left=${left},top=${top}`);
 
