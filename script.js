@@ -9,6 +9,7 @@ const {
   deleteGoodsModal,
   validateForm,
   formControl,
+  openImageModal,
 } = eventControl;
 
 const goods = `
@@ -100,6 +101,7 @@ const goods = `
         data, modalTotalPrice, modalInputDiscount, countInput,
         price, cmsTotalPrice);
     deleteGoodsModal(tableBody, data, cmsTotalPrice);
+    openImageModal(tableBody);
   };
 
   window.goodsInit = init;

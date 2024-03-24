@@ -104,9 +104,44 @@ const formControl =
   });
 };
 
+const openImageModal = (tableBody) => {
+  tableBody.addEventListener('click', e => {
+    const target = e.target;
+    if (target.closest('[data-pic]')) {
+      const url = target.dataset.pic;
+      const w = 800;
+      const h = 600;
+
+      // на первом экране по центру
+      console.log(screen);
+      const height = Math.min(h, screen.availHeight);
+      const width = Math.min(w, screen.availWidth);
+      const left = Math.max(0, (screen.availWidth - w) / 2);
+      const top = Math.max(0, (screen.availHeight - h) / 2);
+      return window.open(url, '', `height=${height},` +
+      `width=${width},left=${left},top=${top}`);
+
+      // два экрана - показывает на втором
+      /*
+      console.log(screen);
+      console.log(window.top.outerWidth);
+      console.log(window.top.screenY);
+      console.log(window.top.screenX);
+      const windowName = 2; // два экрана - показывает на втором
+      const y = window.top.outerHeight / 2 + window.top.screenY - (h / 2);
+      const x = window.top.outerWidth / 2 + window.top.screenX - (w / 2);
+      return window.open(url, windowName, `toolbar=no,location=no,` +
+      `directories=no,status=no,resizable=no,` +
+      `width=${w},height=${h},top=${y},left=${x}`);
+      */
+    }
+  });
+};
+
 export default {
   modalControl,
   deleteGoodsModal,
   validateForm,
   formControl,
+  openImageModal,
 };

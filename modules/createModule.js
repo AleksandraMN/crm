@@ -48,6 +48,7 @@ const createRow = (obj, count, vendorCodeId) => {
   td8.classList.add('table__cell', 'table__cell_btn-wrapper');
   const btn1 = document.createElement('button');
   btn1.classList.add('table__btn', 'table__btn_pic');
+  btn1.setAttribute('data-pic', `https://img.freepik.com/free-photo/modern-stationary-collection-arrangement_23-2149309689.jpg?w=1380&t=st=1711245006~exp=1711245606~hmac=46039465afddd59624aad2bc6f2eef82013992d65cbbe944687f830b0cb775bf`);
   td8.append(btn1);
   const btn2 = document.createElement('button');
   btn2.classList.add('table__btn', 'table__btn_edit');
